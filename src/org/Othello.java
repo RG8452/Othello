@@ -1,6 +1,6 @@
 package org;
 /*
- * RG
+ * RG and JO
  * This is the main Othello class
  * It generates all the frames and such necessary to run the game
  * It will eventually probably do much more
