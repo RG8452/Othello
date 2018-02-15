@@ -125,7 +125,7 @@ public class OthelloPanel extends JPanel
 				}
 			}
 			
-			if(Othello.isValid(clickRow, clickCol) && Othello.grid[clickRow][clickCol] == '\0')	//If spot is a valid move		
+			if(Othello.grid[clickRow][clickCol] == '\0' && Othello.isValid(clickRow, clickCol))	//If spot is a valid move		
 				Othello.grid[clickRow][clickCol] = 'R'; 
 				
 			//Do nothing if spot is invalid
