@@ -100,8 +100,40 @@ public class OthelloPanel extends JPanel
 		// mouseListener methods
 		public void mouseClicked(MouseEvent e)
 		{
-			System.out.println(String.format("Clicked at %d, %d", e.getX(), e.getY()));
-			System.out.println("Click coords - Row: " + (int)(e.getY() / 100) + "\tCol: " + (int)(e.getX() / 100));
+//			System.out.println(String.format("Clicked at %d, %d", e.getX(), e.getY()));
+//			System.out.println("Click coords - Row: " + (int)(e.getY() / 100) + "\tCol: " + (int)(e.getX() / 100));
+			int clickRow = (int)(e.getY() / 100);
+			int clickCol = (int)(e.getX() / 100);
+			if(Othello.grid[clickRow][clickCol] == 'R')	//If spot is already clicked
+			{
+				Othello.grid[clickRow][clickCol] = (Othello.playerOne) ? 'B' : 'W';
+				Othello.playerOne = !Othello.playerOne;
+				Othello.jl.setText("Current player: " + ((Othello.playerOne) ? "Black" : "White"));	//Set label
+				Othello.op.repaint();	//Repaint necessary components
+				Othello.jl.repaint();
+				return;
+			}
+			
+			for(int z=0; z<8; z++)
+			{
+				for(int zz=0; zz<8; zz++)
+				{
+					if(Othello.grid[z][zz] == 'R') 
+					{
+						Othello.grid[z][zz] = '\0';
+					}
+				}
+			}
+			
+			if(Othello.isValid(clickRow, clickCol))	//If spot is a valid move
+			{				
+				Othello.grid[clickRow][clickCol] = 'R';
+			}
+			
+			//Do nothing if spot is invalid
+			Othello.jl.setText("Current player: " + ((Othello.playerOne) ? "Black" : "White"));	//Set label
+			Othello.op.repaint();	//Repaint necessary components
+			Othello.jl.repaint();
 		}
 
 		
