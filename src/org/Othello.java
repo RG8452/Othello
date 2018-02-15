@@ -88,6 +88,35 @@ public class Othello
 		return false; //If empty, return false
 	}
 
+	//This method will flip all pieces during a move
+	public static void flip(int r, int c)
+	{
+		//check for pieces to flip in all directions
+		flipSpot(r, c + 1, 0, 1); 
+		flipSpot(r - 1, c + 1, -1, 1);
+		flipSpot(r - 1, c, -1, 0);
+		flipSpot(r - 1, c - 1, -1, -1);
+		flipSpot(r, c - 1, 0, -1);
+		flipSpot(r + 1, c - 1, 1, -1);
+		flipSpot(r + 1, c, 1, 0);
+		flipSpot(r + 1, c + 1, 1, 1);		
+	}
+	
+	//this method will find and flip all possible pieces on a move
+	public static void flipSpot(int r, int c, int dR, int dC)
+	{
+		if (r < 0 || c < 0 || r > 7 || c > 7) //Out of bounds case
+			return; // do nothing
+		else if (grid[r][c] == ((playerOne) ? 'W' : 'B') && checkSpot(r,c,dR,dC,0)) //If current spot is opposite team and is valid
+		{
+			if (playerOne) grid[r][c] = 'B'; //Change piece to opposite team
+			else grid[r][c] = 'W'; 
+			flipSpot(r + dR, c + dC, dR, dC);
+		}
+		else if (grid[r][c] == ((playerOne) ? 'B' : 'W')) //Same team case
+			return;	//do nothing
+	}
+	
 	//This method resets the whole board
 	public static void reset()
 	{

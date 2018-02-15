@@ -105,6 +105,7 @@ public class OthelloPanel extends JPanel
 			int clickCol = (int)(e.getX() / 100);
 			if(Othello.grid[clickRow][clickCol] == 'R')	//If spot is already clicked
 			{
+				Othello.flip(clickRow, clickCol); //change corresponding pieces
 				Othello.grid[clickRow][clickCol] = (Othello.playerOne) ? 'B' : 'W';
 				Othello.playerOne = !Othello.playerOne;
 				Othello.jl.setText("Current player: " + ((Othello.playerOne) ? "Black" : "White"));	//Set label
@@ -125,8 +126,8 @@ public class OthelloPanel extends JPanel
 			}
 			
 			if(Othello.isValid(clickRow, clickCol))	//If spot is a valid move		
-				Othello.grid[clickRow][clickCol] = 'R';
-			
+				Othello.grid[clickRow][clickCol] = 'R'; 
+				
 			//Do nothing if spot is invalid
 			Othello.jl.setText("Current player: " + ((Othello.playerOne) ? "Black" : "White"));	//Set label
 			Othello.op.repaint();	//Repaint necessary components
