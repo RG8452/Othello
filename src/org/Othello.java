@@ -25,8 +25,8 @@ public class Othello
 	public static char[][] grid = new char[8][8]; //Create grid in which to store pieces
 	public static boolean playerOne; //True if current player is black
 	public static int tCount = 0; //keeps track of how many turns no moves have been made
-	public static int wCount = 2; //number of white pieces
-	public static int bCount = 2; //number of black pieces
+	public static int wCount = 0; //number of white pieces
+	public static int bCount = 0; //number of black pieces
 	public static int nullCount = 0; //number of empty spaces
 
 	public static void main(String[] args)
@@ -60,133 +60,153 @@ public class Othello
 	}
 
 	
-	//Method that checks if the player has any valid moves
-	public static boolean hasValidMove()
-	{
-		if (playerOne)
+	//This Method switches the player turn
+		public static void switchTurn()
+		{
+			playerOne = !playerOne;
+			jl.setText("Current player: " + ((playerOne) ? "Black" : "White"));	//Set label
+			op.repaint();	//Repaint necessary components
+			jl.repaint();
+			if (hasValidMove())
+			{
+				tCount = 0;
+			}	
+			else 
+			{
+				tCount +=1;
+				jl.setText("Current player: " + ((playerOne) ? "Black because White had no valid moves" : "White because Black had no valid moves"));	//Set label
+			}
+			if (tCount == 2 || isFull())
+			{
+				gameOver();
+			} 
+		}
+		//Method that checks if the player has any valid moves
+		public static boolean hasValidMove()
 		{
 			for(int z=0; z<8; z++)
 			{
 				for(int zz=0; zz<8; zz++)
-					if(isValid(z,zz)) return true;
+					 if (grid[z][zz] == '\0' && isValid(z, zz))
+					 {
+						 if(isValid(z,zz)) return true;
+					 }
 			}
-		}
-		return false;
-	}
-	//Method which returns true if a spot is valid for the current player
-	public static boolean isValid(int r, int c)
-	{
-		boolean output = false;
-		output |= checkSpot(r, c + 1, 0, 1, 0); //Checks all directions unit-circle-wise
-		if (output) return true; //Fail-fast checks
-		output |= checkSpot(r - 1, c + 1, -1, 1, 0);
-		if (output) return true;
-		output |= checkSpot(r - 1, c, -1, 0, 0);
-		if (output) return true;
-		output |= checkSpot(r - 1, c - 1, -1, -1, 0);
-		if (output) return true;
-		output |= checkSpot(r, c - 1, 0, -1, 0);
-		if (output) return true;
-		output |= checkSpot(r + 1, c - 1, 1, -1, 0);
-		if (output) return true;
-		output |= checkSpot(r + 1, c, 1, 0, 0);
-		if (output) return true;
-		output |= checkSpot(r + 1, c + 1, 1, 1, 0);
-		return output;
-	}
-
-	//Recursive method which checks in a given direction to see if a spot is valid
-	public static boolean checkSpot(int r, int c, int dR, int dC, int steps)
-	{
-		if (r < 0 || c < 0 || r > 7 || c > 7) //Out of bounds case
 			return false;
-		else if (grid[r][c] == ((playerOne) ? 'W' : 'B')) //If current spot is opposite team
-			return checkSpot(r + dR, c + dC, dR, dC, steps + 1);
-		else if (grid[r][c] == ((playerOne) ? 'B' : 'W')) //Same team case
-			return (steps > 0); //True if you've hit the same team after hitting the other team
-		return false; //If empty, return false
-	}
+		}
+		//Method which returns true if a spot is valid for the current player
+		public static boolean isValid(int r, int c)
+		{
+			boolean output = false;
+			output |= checkSpot(r, c + 1, 0, 1, 0); //Checks all directions unit-circle-wise
+			if (output) return true; //Fail-fast checks
+			output |= checkSpot(r - 1, c + 1, -1, 1, 0);
+			if (output) return true;
+			output |= checkSpot(r - 1, c, -1, 0, 0);
+			if (output) return true;
+			output |= checkSpot(r - 1, c - 1, -1, -1, 0);
+			if (output) return true;
+			output |= checkSpot(r, c - 1, 0, -1, 0);
+			if (output) return true;
+			output |= checkSpot(r + 1, c - 1, 1, -1, 0);
+			if (output) return true;
+			output |= checkSpot(r + 1, c, 1, 0, 0);
+			if (output) return true;
+			output |= checkSpot(r + 1, c + 1, 1, 1, 0);
+			return output;
+		}
 
-	//This method flips all pieces during a move
-	public static void flip(int r, int c)
-	{
-		//check for pieces to flip in all directions
-		flipSpot(r, c + 1, 0, 1); 
-		flipSpot(r - 1, c + 1, -1, 1);
-		flipSpot(r - 1, c, -1, 0);
-		flipSpot(r - 1, c - 1, -1, -1);
-		flipSpot(r, c - 1, 0, -1);
-		flipSpot(r + 1, c - 1, 1, -1);
-		flipSpot(r + 1, c, 1, 0);
-		flipSpot(r + 1, c + 1, 1, 1);		
-	}
-	
-	//This method finds and flips all possible pieces on a move
-	public static void flipSpot(int r, int c, int dR, int dC)
-	{
-		if (r < 0 || c < 0 || r > 7 || c > 7) //Out of bounds case
-			return; // do nothing
-		else if (grid[r][c] == ((playerOne) ? 'W' : 'B') && checkSpot(r,c,dR,dC,0)) //If current spot is opposite team and is valid
+		//Recursive method which checks in a given direction to see if a spot is valid
+		public static boolean checkSpot(int r, int c, int dR, int dC, int steps)
 		{
-			if (playerOne) grid[r][c] = 'B'; //Change piece to opposite team
-			else grid[r][c] = 'W'; 
-			flipSpot(r + dR, c + dC, dR, dC);
+			if (r < 0 || c < 0 || r > 7 || c > 7) //Out of bounds case
+				return false;
+			else if (grid[r][c] == ((playerOne) ? 'W' : 'B')) //If current spot is opposite team
+				return checkSpot(r + dR, c + dC, dR, dC, steps + 1);
+			else if (grid[r][c] == ((playerOne) ? 'B' : 'W')) //Same team case
+				return (steps > 0); //True if you've hit the same team after hitting the other team
+			return false; //If empty, return false
 		}
-		else if (grid[r][c] == ((playerOne) ? 'B' : 'W')) //Same team case
-			return;	//do nothing
-	}
-	//This method checks if the game is over
-		public static void gameOver()
+
+		//This method flips all pieces during a move
+		public static void flip(int r, int c)
 		{
-			for(int z=0; z<8; z++)
-			{
-				for(int zz=0; zz<8; zz++)
-					{
-					if(grid[z][zz] == 'w') 
-						wCount += 1;
-					else if (grid[z][zz] == 'b')
-						bCount += 1;
-					}
-			}
-			if (wCount > bCount) 
-			{
-				JOptionPane.showMessageDialog(null, "White wins " + wCount + " to " + bCount + "!");
-				reset();
-			}
-			else if (bCount > wCount)
-			{
-				JOptionPane.showMessageDialog(null, "Black wins " + bCount + " to " + wCount + "!");
-				reset();
-			}
-			else
-			{
-				JOptionPane.showMessageDialog(null, "Tie " + bCount + " to " + wCount);
-				reset();
-			}
+			//check for pieces to flip in all directions
+			flipSpot(r, c + 1, 0, 1); 
+			flipSpot(r - 1, c + 1, -1, 1);
+			flipSpot(r - 1, c, -1, 0);
+			flipSpot(r - 1, c - 1, -1, -1);
+			flipSpot(r, c - 1, 0, -1);
+			flipSpot(r + 1, c - 1, 1, -1);
+			flipSpot(r + 1, c, 1, 0);
+			flipSpot(r + 1, c + 1, 1, 1);		
 		}
-	
-	//This method checks if the board is full
-		public static boolean isFull()
+		
+		//This method finds and flips all possible pieces on a move
+		public static void flipSpot(int r, int c, int dR, int dC)
 		{
-			for(int z=0; z<8; z++)
+			if (r < 0 || c < 0 || r > 7 || c > 7) //Out of bounds case
+				return; // do nothing
+			else if (grid[r][c] == ((playerOne) ? 'W' : 'B') && checkSpot(r,c,dR,dC,0)) //If current spot is opposite team and is valid
 			{
-				for(int zz=0; zz<8; zz++)
+				if (playerOne) grid[r][c] = 'B'; //Change piece to opposite team
+				else grid[r][c] = 'W'; 
+				flipSpot(r + dR, c + dC, dR, dC);
+			}
+			else if (grid[r][c] == ((playerOne) ? 'B' : 'W')) //Same team case
+				return;	//do nothing
+		}
+		//This method checks if the game is over
+			public static void gameOver()
+			{
+				for(int z=0; z<8; z++)
 				{
-					if(grid[z][zz] == '\0') 
-						nullCount += 1;
+					for(int zz=0; zz<8; zz++)
+						{
+						if(grid[z][zz] == 'W') 
+							wCount += 1;
+						else if (grid[z][zz] == 'B')
+							bCount += 1;
+						}
+				}
+				if (wCount > bCount) 
+				{
+					JOptionPane.showMessageDialog(null, "White wins " + wCount + " to " + bCount + "!");
+					reset();
+				}
+				else if (bCount > wCount)
+				{
+					JOptionPane.showMessageDialog(null, "Black wins " + bCount + " to " + wCount + "!");
+					reset();
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null, "Tie " + bCount + " to " + wCount);
+					reset();
 				}
 			}
-			
-			if (nullCount == 0)
+		
+		//This method checks if the board is full
+			public static boolean isFull()
 			{
+				for(int z=0; z<8; z++)
+				{
+					for(int zz=0; zz<8; zz++)
+					{
+						if(grid[z][zz] == '\0') 
+							return false;
+					}
+				}
 				return true;
 			}
-			return false;
-		}
 		
 	//This method resets the whole board
 	public static void reset()
 	{
+		tCount = 0;
+		bCount = 0;
+		wCount = 0;
+		nullCount = 0; 
 		playerOne = true; //Reset Turn
 		grid = new char[8][8]; //Reset grid
 		grid[3][3] = 'W'; //Reset basic layout

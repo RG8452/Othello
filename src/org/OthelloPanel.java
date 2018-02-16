@@ -19,7 +19,6 @@ public class OthelloPanel extends JPanel
 {
 	private static Color background = new Color(0, 255, 128); //Color of the background
 	private static int offset = 5; //Variable for the offset of the pieces from the corner
-	public static int tCount = 0; // keeps track of how many turns no player has moved for
 
 	//Default constructor
 	public OthelloPanel()
@@ -100,15 +99,6 @@ public class OthelloPanel extends JPanel
 		// mouseListener methods
 		public void mouseClicked(MouseEvent e)
 		{
-			if (!Othello.hasValidMove())
-			{
-				Othello.playerOne = !Othello.playerOne;
-				Othello.jl.setText("Current player: " + ((Othello.playerOne) ? "Black because white had no valid moves" : "White because Black had no valid moves"));	//Set label
-				Othello.op.repaint();	//Repaint necessary components
-				Othello.jl.repaint();
-				tCount += 1;
-				
-			}
 //			System.out.println(String.format("Clicked at %d, %d", e.getX(), e.getY()));
 //			System.out.println("Click coords - Row: " + (int)(e.getY() / 100) + "\tCol: " + (int)(e.getX() / 100));
 			int clickRow = (int)(e.getY() / 100);
@@ -117,11 +107,7 @@ public class OthelloPanel extends JPanel
 			{
 				Othello.flip(clickRow, clickCol); //change corresponding pieces
 				Othello.grid[clickRow][clickCol] = (Othello.playerOne) ? 'B' : 'W';
-				Othello.playerOne = !Othello.playerOne;
-				Othello.jl.setText("Current player: " + ((Othello.playerOne) ? "Black" : "White"));	//Set label
-				Othello.op.repaint();	//Repaint necessary components
-				Othello.jl.repaint();
-				tCount = 0;
+				Othello.switchTurn();
 				return;
 			}
 			
@@ -143,11 +129,6 @@ public class OthelloPanel extends JPanel
 			Othello.jl.setText("Current player: " + ((Othello.playerOne) ? "Black" : "White"));	//Set label
 			Othello.op.repaint();	//Repaint necessary components
 			Othello.jl.repaint();
-			
-			if (tCount == 2 || Othello.isFull())
-			{
-			Othello.gameOver();
-			}
 		}
 		
 		
