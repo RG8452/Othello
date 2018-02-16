@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 public class Othello
 {
@@ -23,6 +24,10 @@ public class Othello
 	public static JButton reset; //Button for resetting game
 	public static char[][] grid = new char[8][8]; //Create grid in which to store pieces
 	public static boolean playerOne; //True if current player is black
+	public static int tCount = 0; //keeps track of how many turns no moves have been made
+	public static int wCount = 2; //number of white pieces
+	public static int bCount = 2; //number of black pieces
+	public static int nullCount = 0; //number of empty spaces
 
 	public static void main(String[] args)
 	{
@@ -54,6 +59,20 @@ public class Othello
 		jf.setVisible(true); //Set visible
 	}
 
+	
+	//Method that checks if the player has any valid moves
+	public static boolean hasValidMove()
+	{
+		if (playerOne)
+		{
+			for(int z=0; z<8; z++)
+			{
+				for(int zz=0; zz<8; zz++)
+					if(isValid(z,zz)) return true;
+			}
+		}
+		return false;
+	}
 	//Method which returns true if a spot is valid for the current player
 	public static boolean isValid(int r, int c)
 	{
@@ -88,7 +107,7 @@ public class Othello
 		return false; //If empty, return false
 	}
 
-	//This method will flip all pieces during a move
+	//This method flips all pieces during a move
 	public static void flip(int r, int c)
 	{
 		//check for pieces to flip in all directions
@@ -102,7 +121,7 @@ public class Othello
 		flipSpot(r + 1, c + 1, 1, 1);		
 	}
 	
-	//this method will find and flip all possible pieces on a move
+	//This method finds and flips all possible pieces on a move
 	public static void flipSpot(int r, int c, int dR, int dC)
 	{
 		if (r < 0 || c < 0 || r > 7 || c > 7) //Out of bounds case
@@ -116,7 +135,55 @@ public class Othello
 		else if (grid[r][c] == ((playerOne) ? 'B' : 'W')) //Same team case
 			return;	//do nothing
 	}
+	//This method checks if the game is over
+		public static void gameOver()
+		{
+			for(int z=0; z<8; z++)
+			{
+				for(int zz=0; zz<8; zz++)
+					{
+					if(grid[z][zz] == 'w') 
+						wCount += 1;
+					else if (grid[z][zz] == 'b')
+						bCount += 1;
+					}
+			}
+			if (wCount > bCount) 
+			{
+				JOptionPane.showMessageDialog(null, "White wins " + wCount + " to " + bCount + "!");
+				reset();
+			}
+			else if (bCount > wCount)
+			{
+				JOptionPane.showMessageDialog(null, "Black wins " + bCount + " to " + wCount + "!");
+				reset();
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(null, "Tie " + bCount + " to " + wCount);
+				reset();
+			}
+		}
 	
+	//This method checks if the board is full
+		public static boolean isFull()
+		{
+			for(int z=0; z<8; z++)
+			{
+				for(int zz=0; zz<8; zz++)
+				{
+					if(grid[z][zz] == '\0') 
+						nullCount += 1;
+				}
+			}
+			
+			if (nullCount == 0)
+			{
+				return true;
+			}
+			return false;
+		}
+		
 	//This method resets the whole board
 	public static void reset()
 	{
